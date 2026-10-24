@@ -488,6 +488,7 @@ export function createKeyUsageRegistry(entries = [], { store = null } = {}) {
  */
 function usageFromInfo(info) {
     if (!info || !info.tokens) return null;
+    if (!Number(info.tokens.input) && !Number(info.tokens.output)) return null;
     const count = (value) => (Number.isFinite(Number(value)) ? Number(value) : 0);
     return {
         promptTokens: count(info.tokens.input) + count(info.tokens.cache?.read) + count(info.tokens.cache?.write),
