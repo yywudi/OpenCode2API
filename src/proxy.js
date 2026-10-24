@@ -492,7 +492,8 @@ function usageFromInfo(info) {
     return {
         promptTokens: count(info.tokens.input) + count(info.tokens.cache?.read) + count(info.tokens.cache?.write),
         completionTokens: count(info.tokens.output),
-        reasoningTokens: count(info.tokens.reasoning)
+        reasoningTokens: count(info.tokens.reasoning),
+        cachedTokens: count(info.tokens.cache?.read)
     };
 }
 
@@ -2948,6 +2949,9 @@ export function createApp(config) {
                                 total_tokens: totalTokens,
                                 completion_tokens_details: {
                                     reasoning_tokens: reasoningReported
+                                },
+                                prompt_tokens_details: {
+                                    cached_tokens: reportedUsage ? (reportedUsage.cachedTokens || 0) : 0
                                 }
                             }
                         })}\n\n`);
@@ -3101,6 +3105,9 @@ export function createApp(config) {
                                 total_tokens: totalTokens,
                                 completion_tokens_details: {
                                     reasoning_tokens: reasoningTokensCalc
+                                },
+                                prompt_tokens_details: {
+                                    cached_tokens: reportedUsage ? (reportedUsage.cachedTokens || 0) : 0
                                 }
                             }
                         });
