@@ -3029,12 +3029,8 @@ export function createApp(config) {
                         }
                         if (error && !content && !reasoning) {
                             if (affinitySignal) await chatSessionEntryFail(affinitySignal, sessionId);
-                            return res.status(502).json({
-                                error: {
-                                    message: error.data?.message || error.message || 'OpenCode provider error',
-                                    type: error.name || 'OpenCodeError'
-                                }
-                            });
+                            const transformed = transformUpstreamError(error);
+                            return res.status(transformed.statusCode).json(transformed.error);
                         }
                         let parsedToolCalls = externalToolRegistry.length > 0
                             ? parseExternalToolCallsFromText(externalToolRegistry, reasoning, content)
@@ -3155,7 +3151,8 @@ export function createApp(config) {
         } catch (error) {
             console.error('[Proxy] Request Handler Error:', error.message);
             if (!res.headersSent) {
-                res.status(500).json({ error: { message: error.message, type: error.constructor.name } });
+                const transformed = transformUpstreamError(error);
+                res.status(transformed.statusCode).json(transformed.error);
             }
         }
     });
